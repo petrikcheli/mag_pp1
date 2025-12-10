@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}История расчетов{% endblock %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/history.css' %}">
+
+<h1>История расчётов</h1>
+
+<!-- 🔍 Поисковая строка -->
+<form method="get" style="margin-bottom: 20px;">
+    <input type="text"
+           name="query"
+           value="{{ query }}"
+           placeholder="Введите название или часть результата..."
+           style="padding: 6px; width: 260px;">
+    <button type="submit">Поиск</button>
+</form>
+
+{% if calculations %}
+    <ul>
+    {% for calc in calculations %}
+        <li class="calc-item">
+            <details>
+                <summary class="calc-summary">
+                    <span class="calc-title">
+                        <b>{{ calc.name|default:"Без имени" }}</b> — {{ calc.created_at|date:"d.m.Y H:i" }}
+                    </span>
+
+                    <span class="calc-actions">
+                        <form method="post" action="{% url 'delete_calculation' calc.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-delete btn-small">Удалить</button>
+                        </form>
+
+                        <a href="{% url 'pdf_calculation' calc.id %}" target="_blank" class="btn btn-pdf btn-small">
+                            PDF
+                        </a>
+                    </span>
+                </summary>
+
+                <h4>Входные данные:</h4>
+                <ul>
+                {% for key, value in calc.input_data.items %}
+                    <li><b>{{ key }}:</b> {{ value }}</li>
+                {% endfor %}
+                </ul>
+
+                <h4>Результаты:</h4>
+                <ul>
+                {% for key, value in calc.result_data.items %}
+                    <li><b>{{ key }}:</b> {{ value }}</li>
+                {% endfor %}
+                </ul>
+            </details>
+        </li>
+    {% endfor %}
+    </ul>
+
+
+
+{% else %}
+    <p>Нет сохранённых расчетов.</p>
+{% endif %}
+
+{% endblock %}

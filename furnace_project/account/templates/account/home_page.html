@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Расчёт доменной печи</h1>
+
+<form method="post" class="calculator-form">
+    {% csrf_token %}
+    <div class="form-grid">
+        {% for field in form %}
+        <div class="form-item">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="form-name">
+        <label for="calc_name">Название расчета (опционально):</label>
+        <input type="text" name="calc_name" id="calc_name">
+    </div>
+
+    <button type="submit" class="btn">Рассчитать</button>
+</form>
+
+
+
+{% if result %}
+    <h2>Результаты</h2>
+    <div class="results-grid">
+        {% for name, value in result.items %}
+            <div class="result-card">
+                <h3>{{ name }}</h3>
+                <p>{{ value }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}
